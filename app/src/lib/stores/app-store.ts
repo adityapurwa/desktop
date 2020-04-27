@@ -829,6 +829,8 @@ export class AppStore extends TypedBaseStore<IAppState> {
       }
     })
 
+    this.recordCreatedTags(prevRepositoryState.localTags, gitStore.localTags)
+
     this.repositoryStateCache.update(repository, () => ({
       commitLookup: gitStore.commitLookup,
       localCommitSHAs: gitStore.localCommitSHAs,
@@ -847,6 +849,32 @@ export class AppStore extends TypedBaseStore<IAppState> {
       this._selectStashedFile(repository)
     } else {
       this.emitUpdate()
+    }
+  }
+
+  /**
+   * This method looks at the difference between the previously stored local tags
+   * and the new stored local tags to find out how many tags are being created.
+   *
+   * This takes into account both takes created from Desktop and from any other
+   * external program.
+   */
+  private recordCreatedTags(
+    previousTags: Set<string> | null,
+    newTags: Set<string> | null
+  ) {
+    if (previousTags === null || newTags === null) {
+      return
+    }
+
+    let numTags = 0
+    for (const newTag of newTags) {
+      if (!previousTags.has(newTag)) {
+        numTags++
+      }
+    }
+    if (numTags > 0) {
+      this.statsStore.recordTagCreated(numTags)
     }
   }
 
