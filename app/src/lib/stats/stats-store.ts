@@ -137,7 +137,7 @@ const DefaultDailyMeasures: IDailyMeasures = {
   forksCreated: 0,
   issueCreationWebpageOpenedCount: 0,
   tagsCreatedInDesktop: 0,
-  tagsCreated: 0
+  tagsCreated: 0,
 }
 
 interface IOnboardingStats {
